@@ -1,0 +1,71 @@
+.c-chat {
+  $pointerWidth: 52px;
+  $text-color-dark: #ccc;
+  $space-tiny: 10px;
+  $space-large: 50px;
+  $brand-light-blue: blue;
+  $global-transition: 1s;
+  $global-radius: 3px;
+  $space-small: 10px;
+  $space: 30px;
+
+  display: flex;
+  align-items: flex-end;
+  color: $text-color-dark;
+  height: 300px;
+  overflow: hidden;
+  margin-bottom: $space-tiny;
+  mask-image: linear-gradient(transparent, rgba(0, 0, 0, 1.0) 15%); // fade-out
+  //TODO add fall-back for fade-out on IE and Edge
+  // @include mq($from: desktop) {
+  //   font-size: $step-up-1;
+  //   padding-left: $pointerWidth;
+  //   height: 400px;
+  // }
+
+  &__scroll {
+    margin-top: $space-large; // make sure the first speech bubble isn't cut off by the fade-out
+    transition: $global-transition;
+    width: 100%;
+  }
+
+  &__balloon {
+    position: relative;
+    width: fit-content;
+    background-color: $brand-light-blue;
+    border-radius: ($global-radius * 3);
+    padding: $space-tiny $space-small;
+    margin: $space-tiny 0 $space-tiny $pointerWidth;
+    &:before {
+      content: ' ';
+      display: block;
+      position: absolute;
+      top: ($global-radius * 3);
+      left: -($pointerWidth);
+      width: $pointerWidth;
+      height: 32px;
+      // background-image: url('../assets/img/chat-avatar.svg');
+    }
+    // @include mq($from: desktop) {
+    //   max-width: 80%;
+    //   background-color: $white;
+    //   margin: $space-tiny 0;
+    //   &:before {
+    //     background-image: url('../images/chat-balloon-pointer.svg');
+    //     height: $space;
+    //   }
+    // }
+  }
+  &__buttons {
+    &--choice {
+      margin-top: $space;
+    }
+    &--answer {
+      text-align: right;
+    }
+  }
+  &__button {
+    margin: $space-tiny;
+    transition: $global-transition;
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "start": [
+    {"delay": 1200, "type": "message", "content": "Hoe gaat het met u?", "user": "bot"},
+    {"delay": 1800, "type": "answers", "content": [
+      {"nextQuestion": "vraagtwee", "option": "Gaat lekker!"},
+      {"nextQuestion": "vraagtwee", "option": "Mwoah, kon beter"},
+      {"nextQuestion": "einde", "option": "Waardeloos"}]
+    }
+  ],
+  "vraagtwee": [
+    {"delay": 1200, "type": "message", "content": "Leuk! Maar eigenlijk niet zo belangrijk", "user": "bot"},
+    {"delay": 1600, "type": "message", "content": "Grapje natuurlijk", "user": "bot"},
+    {"delay": 2300, "type": "message", "content": "Uw mentale gezondheid is heel belangrijk voor ons", "user": "bot"},
+    {"delay": 1800, "type": "message", "content": "Dat begrijp ik", "user": "human"},
+    {"delay": 1800, "type": "answers", "content": [
+      {"nextQuestion": "einde", "option": "Maar ik vind dit geen leuke grappen"},
+      {"nextQuestion": "grollen", "option": "Ik heb ook een slecht gevoel voor humor"}]
+    }
+  ],
+  "einde": [
+    {"delay": 1900, "type": "message", "content": "Nou, dan kappen we er ook gewoon mee", "user": "bot"}
+  ],
+  "grollen": [
+    {"delay": 1900, "type": "message", "content": "Wow, we konden wel broers zijn! 🤣 <a href='http://www.flauwegrappen.nl' target='_blank'>Dit is mijn favoriete site</a>", "user": "bot"}
+  ]
+}
+  

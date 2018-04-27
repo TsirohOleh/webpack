@@ -3,10 +3,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const extractLess = new ExtractTextPlugin({
+const extractSass = new ExtractTextPlugin({
   filename: "[name].[contenthash].css",
   disable: process.env.NODE_ENV === "development"
 });
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/app/index.js',
@@ -15,8 +16,19 @@ module.exports = {
     path: path.resolve(__dirname, process.env.NODE_ENV === 'development' ? 'public' : 'dist')
   },
   plugins: [
-    new HtmlWebpackPlugin(),
-    extractLess
+    new HtmlWebpackPlugin({
+      title: 'ChatBot',
+      template: './index.html',
+      templateParameters: true,
+      filename: 'index.html'
+    }),
+    extractSass,
+    new CopyWebpackPlugin([
+      {
+        from:'src/assets',
+        to: 'assets'
+      } 
+    ]),
   ],
   watch: true,
   module: {
@@ -30,13 +42,13 @@ module.exports = {
         }
       },
       {
-        test: /\.less$/,
+        test: /\.scss$/,
         exclude:'/node_modules',
-        use: extractLess.extract({
+        use: extractSass.extract({
           use: [{
-            loader: "css-loader"
+              loader: "css-loader"
           }, {
-            loader: "less-loader"
+              loader: "sass-loader"
           }],
           // use style-loader in development
           fallback: "style-loader"
