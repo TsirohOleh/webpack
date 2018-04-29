@@ -1,53 +1,61 @@
 import './styles.scss';
 
 import { getConversation } from './core/services/get-conversation.service';
-import { appendHtml, appendMessage, appendAnnswers, forEachAsync } from './core/services/helpers';
+import { appendHtml, appendMessage, appendAnnswers, asyncForEach, waitFor } from './core/services/helpers';
 import { dots } from './templates/dots';
 import { button } from './templates/button';
+import { config } from './core/config/config';
 
-async function renderNextElement($element, option) {
-  console.log(1);
-  switch (option.type) {
-    case 'message':
-      appendMessage($element, option);
-      break;
-    case 'answers':
-      appendAnnswers($element, option);
-      break;
-    default:
-      break;
-  }
+init('chat-bot');
 
-  await new Promise(resolve => setTimeout(() => resolve(), option.delay));
-}
+let previousDelay = 0;
 
-const renderChat = (id) => {
+function init(id) {
+  document.addEventListener('DOMContentLoaded', () => {
+    renderChat(id);
+  });
+};
+
+function renderChat(id) {
   const chatBotContainer$ = document.getElementById(id);
   const chat = `
     <div class="c-chat">
       <div class="c-chat__scroll"></div>
     </div>
   `;
-  let $chat;
+  let $chatContainer;
 
   chatBotContainer$.innerHTML = chat;
-  $chat = document.querySelector('.c-chat__scroll');
+  $chatContainer = document.querySelector('.c-chat__scroll');
 
   getConversation()
     .then((data) => {
       console.log(data);
-      forEachAsync(data.start, (option) => {
-        renderNextElement($chat, option);
-      });
+      nextStep($chatContainer, data, 'start');
     });
 };
-const init = (id) => {
-  document.addEventListener('DOMContentLoaded', () => {
-    renderChat(id);
-  });
-};
 
-init('chat-bot');
+function nextStep($container, options, stepName) {
+  previousDelay = 0;
+  asyncForEach(options[stepName], async (option) => {
+    await waitFor(previousDelay);
+    previousDelay = option.delay + config.typeDelay;
+    renderNextElement($container, options, option);
+  });
+}
+
+function renderNextElement($container, options, option) {
+  switch (option.type) {
+    case 'message':
+      appendMessage($container, option);
+      break;
+    case 'answers':
+      appendAnnswers($container, options, option, nextStep);
+      break;
+    default:
+      break;
+  }
+}
 
 module.exports = {
   init: init
