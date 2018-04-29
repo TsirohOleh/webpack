@@ -1,11 +1,11 @@
 import { dots } from '../../templates/dots';
 import { button } from '../../templates/button';
 
-export const appendHtml = ($container, html) => {
+export function appendHtml($container, html) {
   $container.insertAdjacentHTML('beforeend', html);
 };
 
-export const appendMessage = ($container, options) => {
+export function appendMessage($container, options) {
   const $balloon = document.createElement('div');
 
   $balloon.className = 'c-chat__balloon';
@@ -16,37 +16,39 @@ export const appendMessage = ($container, options) => {
   }, options.delay);
 };
 
-export const appendAnnswers = ($container, options, option, callback) => {
+export function appendAnswers($container, options, option, callback) {
   const buttons = `
     <div class="c-chat__buttons c-chat__buttons--choice">
       ${option.content.map((item) => button(item.option))}
     </div>
   `;
-  let $questions;
+  let $buttons;
 
   setTimeout(() => {
     appendHtml($container, buttons);
-    $questions = $container.querySelectorAll('.c-chat__buttons--choice .c-chat__button')
-    $questions
-      .forEach(($element, i) => {
-        $element.addEventListener('click', () => {
-          $questions.forEach(($question, questionIndex) => {
-            if (i !== questionIndex) {
-              $question.remove();
-            } else {
-              $question.classList.add('c-chat__button--answer');
-            }
-          });
-          callback($container, options, option.content[i].nextQuestion);
+    $buttons = $container.querySelectorAll('.c-chat__buttons--choice:last-of-type .c-chat__button');
+    $buttons.forEach(($element, i) => {
+      $element.addEventListener('click', function clickCallback() {
+        $buttons.forEach(($button, buttonIndex) => {
+          if (i !== buttonIndex) {
+            $button.removeEventListener('click', clickCallback);
+            $button.remove();
+          } else {
+            $button.classList.add('c-chat__button--answer');
+          }
         });
+        callback($container, options, option.content[i].nextQuestion);
       });
+    });
   }, option.delay);
 };
 
-export const waitFor = (ms) => new Promise(r => setTimeout(r, ms));
+export function waitFor(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
 
 export async function asyncForEach(array, callback) {
   for (let i = 0; i < array.length; i++) {
-    await callback(array[i], i, array)
+    await callback(array[i], i, array);
   }
 }

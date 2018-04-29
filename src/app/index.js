@@ -1,7 +1,7 @@
 import './styles.scss';
 
 import { getConversation } from './core/services/get-conversation.service';
-import { appendHtml, appendMessage, appendAnnswers, asyncForEach, waitFor } from './core/services/helpers';
+import { appendHtml, appendMessage, appendAnswers, asyncForEach, waitFor } from './core/services/helpers';
 import { dots } from './templates/dots';
 import { button } from './templates/button';
 import { config } from './core/config/config';
@@ -30,27 +30,30 @@ function renderChat(id) {
 
   getConversation()
     .then((data) => {
-      console.log(data);
       nextStep($chatContainer, data, 'start');
     });
 };
 
 function nextStep($container, options, stepName) {
-  previousDelay = 0;
   asyncForEach(options[stepName], async (option) => {
-    await waitFor(previousDelay);
-    previousDelay = option.delay + config.typeDelay;
+    if (option.type === config.types.Answers) {
+      await waitFor(previousDelay);
+      previousDelay = 0;
+    } else {
+      await waitFor(previousDelay + config.typeDelay);
+      previousDelay = option.delay;
+    }
     renderNextElement($container, options, option);
   });
 }
 
 function renderNextElement($container, options, option) {
   switch (option.type) {
-    case 'message':
+    case config.types.Message:
       appendMessage($container, option);
       break;
-    case 'answers':
-      appendAnnswers($container, options, option, nextStep);
+    case config.types.Answers:
+      appendAnswers($container, options, option, nextStep);
       break;
     default:
       break;
